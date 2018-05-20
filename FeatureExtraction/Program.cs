@@ -11,13 +11,9 @@ namespace FeatureExtraction
             var rgbHists = Histogram.GetHslHistogram(bitmap, 30);
             foreach (var hist in rgbHists)
             {
-                foreach (var d in hist)
-                {
-                    Console.WriteLine(d + " ");
-                }
+                foreach (var d in hist) Console.WriteLine(d + " ");
                 Console.WriteLine("\n");
             }
-                
         }
     }
 }

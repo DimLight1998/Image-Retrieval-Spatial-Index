@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeatureExtraction", "FeatureExtraction\FeatureExtraction.csproj", "{1D587728-EC88-47BB-A440-869841AF8452}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTree", "RTree\RTree.csproj", "{F06045A2-E452-49EE-9BC7-0D0AB54DD6AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{1D587728-EC88-47BB-A440-869841AF8452}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D587728-EC88-47BB-A440-869841AF8452}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D587728-EC88-47BB-A440-869841AF8452}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F06045A2-E452-49EE-9BC7-0D0AB54DD6AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F06045A2-E452-49EE-9BC7-0D0AB54DD6AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F06045A2-E452-49EE-9BC7-0D0AB54DD6AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F06045A2-E452-49EE-9BC7-0D0AB54DD6AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
