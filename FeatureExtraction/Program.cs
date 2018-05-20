@@ -1,21 +1,23 @@
-using System;
-using SixLabors.ImageSharp;
+﻿using System;
+using System.Drawing;
 
 namespace FeatureExtraction
 {
     internal class Program
     {
-        private static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            using (var image = Image.Load(@"G:\Workspace\DS&Alg-Project1-Release\data\image\n01613177_69.JPEG"))
+            var bitmap = Image.FromFile(@"G:\Workspace\DS&Alg-Project1-Release\data\image\n01613177_69.JPEG") as Bitmap;
+            var rgbHists = Histogram.GetRgbHistogram(bitmap, 30);
+            foreach (var hist in rgbHists)
             {
-                var histgrams = RgbHistogram.GetRgbHistogram(image, 20);
-                foreach (var histgram in histgrams)
+                foreach (var d in hist)
                 {
-                    foreach (var i in histgram) Console.Write($"{i:F5} ");
-                    Console.WriteLine();
+                    Console.WriteLine(d + " ");
                 }
+                Console.WriteLine("\n");
             }
+                
         }
     }
 }
