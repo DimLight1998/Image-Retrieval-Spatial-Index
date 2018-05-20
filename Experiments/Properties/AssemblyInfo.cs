@@ -4,12 +4,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("RTree")]
-[assembly: AssemblyDescription("RTree implementation")]
+[assembly: AssemblyTitle("Experiments")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("LGPL")]
-[assembly: AssemblyProduct("RTree")]
-[assembly: AssemblyCopyright("LGPL")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("Experiments")]
+[assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("45b06ef7-d72a-4463-b618-fe38d9322958")]
+[assembly: Guid("24836D4F-AE1D-4A84-A286-9F84D475C4C7")]
 
 // Version information for an assembly consists of the following four values:
 //
