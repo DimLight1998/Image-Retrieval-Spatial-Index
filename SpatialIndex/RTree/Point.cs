@@ -1,5 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace SpatialIndex.RTree
 {
@@ -13,10 +14,15 @@ namespace SpatialIndex.RTree
         /// </summary>
         /// <param name="dimension">点的维度</param>
         /// <param name="coordinate">点的坐标，长度应为点的维度</param>
-        /// <exception cref="NotImplementedException"></exception>
-        public Point(int dimension, List<int> coordinate)
+        public Point(int dimension, IReadOnlyCollection<float> coordinate)
         {
-            throw new NotImplementedException();
+            Debug.Assert(dimension == coordinate.Count);
+
+            Dimension = dimension;
+            Coordinate = coordinate.ToList();
         }
+
+        public int Dimension { get; }
+        public List<float> Coordinate { get; }
     }
 }
