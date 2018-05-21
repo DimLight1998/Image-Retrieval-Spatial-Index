@@ -29,8 +29,19 @@ namespace SpatialIndex.RTree
             }
         }
 
+        /// <summary>
+        ///     矩形的维度
+        /// </summary>
         public int Dimension { get; }
+
+        /// <summary>
+        ///     矩形的最大边界值列表（与最小边界值列表对应顺序）
+        /// </summary>
         public List<float> MaxBoundries { get; } = new List<float>();
+
+        /// <summary>
+        ///     矩形的最小边界值列表（与最大边界值列表对应顺序）
+        /// </summary>
         public List<float> MinBoundries { get; } = new List<float>();
 
         /// <summary>

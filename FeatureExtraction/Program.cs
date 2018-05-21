@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace FeatureExtraction
 {
@@ -7,13 +6,10 @@ namespace FeatureExtraction
     {
         public static void Main(string[] args)
         {
-            var bitmap = Image.FromFile(@"G:\Workspace\DS&Alg-Project1-Release\data\image\n01613177_69.JPEG") as Bitmap;
-            var rgbHists = Histogram.GetHslHistogram(bitmap, 30);
-            foreach (var hist in rgbHists)
-            {
-                foreach (var d in hist) Console.WriteLine(d + " ");
-                Console.WriteLine("\n");
-            }
+            var bitmap =
+                Image.FromFile(@"G:\Workspace\DS&Alg-Project1-Release\data\image\n04583620_4657.JPEG") as Bitmap;
+            var grey = Process.GetBinaryBitmap(bitmap);
+            grey.Save("test.png");
         }
     }
 }
