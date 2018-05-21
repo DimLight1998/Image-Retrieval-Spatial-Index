@@ -61,22 +61,11 @@ namespace RTree
         // which can be reused.
         //private TIntStack deletedNodeIds = new TIntStack();
         private readonly Stack<int> deletedNodeIds = new Stack<int>();
-        private ILog deleteLog;
-        private byte[] entryStatus;
-
-        // Enables creation of new nodes
-        //private int highestUsedNodeId = rootNodeId; 
-        private int highestUsedNodeId;
-        private volatile int idcounter = int.MinValue;
 
         //Added dictionaries to support generic objects..
         //possibility to change the code to support objects without dictionaries.
         private readonly Dictionary<int, T> IdsToItems = new Dictionary<int, T>();
-        private byte[] initialEntryStatus;
         private readonly Dictionary<T, int> ItemsToIds = new Dictionary<T, int>();
-        private ILog log;
-        internal int maxNodeEntries;
-        private int minNodeEntries;
 
         // List of nearest rectangles. Use a member variable to
         // avoid recreating the object each time nearest() is called.
@@ -107,6 +96,17 @@ namespace RTree
 
         //private TIntStack parentsEntry = new TIntStack();
         private readonly Stack<int> parentsEntry = new Stack<int>();
+        private ILog deleteLog;
+        private byte[] entryStatus;
+
+        // Enables creation of new nodes
+        //private int highestUsedNodeId = rootNodeId; 
+        private int highestUsedNodeId;
+        private volatile int idcounter = int.MinValue;
+        private byte[] initialEntryStatus;
+        private ILog log;
+        internal int maxNodeEntries;
+        private int minNodeEntries;
         private int rootNodeId;
 
         // initialisation
