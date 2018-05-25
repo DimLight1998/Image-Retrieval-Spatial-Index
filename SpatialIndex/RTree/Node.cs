@@ -51,7 +51,7 @@ namespace SpatialIndex.RTree
         /// <summary>
         ///     结点子树数目
         /// </summary>
-        internal int EntryCount { get; private set; }
+        internal int EntryCount { get; set; }
 
         /// <summary>
         ///     向结点中加入一个矩形（以及它的 ID）
@@ -150,6 +150,16 @@ namespace SpatialIndex.RTree
                 Mbr = Entries[0].Copy();
                 for (var i = 1; i < EntryCount; i++)
                     Mbr.AddRectangle(Entries[i]);
+            }
+        }
+
+        internal void recalculateMBR(Rectangle deletedRectangle)
+        {
+            if (Mbr.edgeOverlaps(deletedRectangle))
+            {
+                Mbr.set(Entries[0].MinBoundries, Entries[0].MaxBoundries);
+
+                for (int i = 1; i < EntryCount; i++) Mbr.AddRectangle(Entries[i]);
             }
         }
     }

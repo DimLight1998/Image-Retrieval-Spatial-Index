@@ -29,10 +29,15 @@ namespace SpatialIndex.RTree
             }
         }
 
+        public Rectangle()
+        {
+
+        }
+
         /// <summary>
         ///     矩形的维度
         /// </summary>
-        public int Dimension { get; }
+        public int Dimension { get; set; }
 
         /// <summary>
         ///     矩形的最大边界值列表（与最小边界值列表对应顺序）
@@ -43,6 +48,23 @@ namespace SpatialIndex.RTree
         ///     矩形的最小边界值列表（与最大边界值列表对应顺序）
         /// </summary>
         public List<float> MinBoundries { get; } = new List<float>();
+
+        internal void set(List<float> min, List<float> max)
+        {
+            MinBoundries.Clear();
+            MaxBoundries.Clear();
+
+            for (var i = 0; i < Dimension; i++)
+            {
+                MaxBoundries.Add(max[i]);
+                MinBoundries.Add(min[i]);
+            }
+        }
+
+        internal void setDimension(int d)
+        {
+            Dimension = d;
+        }
 
         /// <summary>
         ///     与给定矩形在任意维度上某一条边“对齐”时返回 true
@@ -244,6 +266,14 @@ namespace SpatialIndex.RTree
         public bool ReferenceEquals(Rectangle rectangle)
         {
             return Equals(rectangle);
+        }
+
+        internal bool edgeOverlaps(Rectangle r)
+        {
+            for (int i = 0; i < Dimension; i++)
+                if (MinBoundries[i] == r.MinBoundries[i] || MaxBoundries[i] == r.MaxBoundries[i])
+                    return true;
+            return false;
         }
     }
 }
