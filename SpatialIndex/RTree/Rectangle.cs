@@ -2,21 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace SpatialIndex.RTree
 {
-    /// <summary>
-    ///     高维的一个矩形，单浮点精度
-    /// </summary>
     [SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
     public class Rectangle
     {
-        /// <summary>
-        ///     用指定的两个对角点构造出一个矩形
-        /// </summary>
-        /// <param name="dimension">矩形的维度</param>
-        /// <param name="point1">矩形的任一个顶点的坐标，应具有相同维度</param>
-        /// <param name="point2"><c>point1</c> 的对角顶点的坐标，应具有相同维度</param>
         public Rectangle(int dimension, Point point1, Point point2)
         {
             Debug.Assert(dimension == point1.Dimension && dimension == point2.Dimension);
@@ -29,46 +21,19 @@ namespace SpatialIndex.RTree
             }
         }
 
-        public Rectangle()
+        public Rectangle(int dimension, List<float> minBoundries, List<float> maxBoundries)
         {
+            Debug.Assert(dimension == minBoundries.Count && dimension == maxBoundries.Count);
 
+            Dimension = dimension;
+            MaxBoundries = maxBoundries.ToList();
+            MinBoundries = minBoundries.ToList();
         }
 
-        /// <summary>
-        ///     矩形的维度
-        /// </summary>
-        public int Dimension { get; set; }
+        public int Dimension { get; }
+        public List<float> MaxBoundries { get; set; } = new List<float>();
+        public List<float> MinBoundries { get; set; } = new List<float>();
 
-        /// <summary>
-        ///     矩形的最大边界值列表（与最小边界值列表对应顺序）
-        /// </summary>
-        public List<float> MaxBoundries { get; } = new List<float>();
-
-        /// <summary>
-        ///     矩形的最小边界值列表（与最大边界值列表对应顺序）
-        /// </summary>
-        public List<float> MinBoundries { get; } = new List<float>();
-
-        internal void set(List<float> min, List<float> max)
-        {
-            MinBoundries.Clear();
-            MaxBoundries.Clear();
-
-            for (var i = 0; i < Dimension; i++)
-            {
-                MaxBoundries.Add(max[i]);
-                MinBoundries.Add(min[i]);
-            }
-        }
-
-        internal void setDimension(int d)
-        {
-            Dimension = d;
-        }
-
-        /// <summary>
-        ///     与给定矩形在任意维度上某一条边“对齐”时返回 true
-        /// </summary>
         public bool OverlapsWith(Rectangle rectangle)
         {
             Debug.Assert(rectangle.Dimension == Dimension);
@@ -79,9 +44,6 @@ namespace SpatialIndex.RTree
             return false;
         }
 
-        /// <summary>
-        ///     与给定矩形的存在非空交集时即返回 true（不要求交集体积大于 0）
-        /// </summary>
         public bool IntersectsWith(Rectangle rectangle)
         {
             Debug.Assert(rectangle.Dimension == Dimension);
@@ -92,9 +54,6 @@ namespace SpatialIndex.RTree
             return true;
         }
 
-        /// <summary>
-        ///     包含给定矩形时返回 true（不要求严格包含，边重合也算）
-        /// </summary>
         public bool Contains(Rectangle rectangle)
         {
             Debug.Assert(rectangle.Dimension == Dimension);
@@ -105,9 +64,6 @@ namespace SpatialIndex.RTree
             return true;
         }
 
-        /// <summary>
-        ///     被给定矩形包含时返回 true（不要求严格包含，边重合也算）
-        /// </summary>
         public bool IsContainedBy(Rectangle rectangle)
         {
             Debug.Assert(rectangle.Dimension == Dimension);
@@ -118,9 +74,6 @@ namespace SpatialIndex.RTree
             return true;
         }
 
-        /// <summary>
-        ///     计算矩形内部任一点到给定点的最小距离
-        /// </summary>
         public float MinimalDistanceTo(Point point)
         {
             Debug.Assert(point.Dimension == Dimension);
@@ -135,9 +88,6 @@ namespace SpatialIndex.RTree
             return (float) Math.Sqrt(distanceSquared);
         }
 
-        /// <summary>
-        ///     计算矩形内部任一点到给定矩形内部任一点的最小距离
-        /// </summary>
         public float MinimalDistanceTo(Rectangle rectangle)
         {
             Debug.Assert(rectangle.Dimension == Dimension);
@@ -153,9 +103,6 @@ namespace SpatialIndex.RTree
             return (float) Math.Sqrt(distanceSquared);
         }
 
-        /// <summary>
-        ///     计算矩形内部任一点到给定点的最大距离
-        /// </summary>
         public float MaximalDistanceTo(Point point)
         {
             Debug.Assert(point.Dimension == Dimension);
@@ -171,9 +118,6 @@ namespace SpatialIndex.RTree
             return (float) Math.Sqrt(distanceSquared);
         }
 
-        /// <summary>
-        ///     计算矩形内部任一点到给定矩形内部任一点的最大距离
-        /// </summary>
         public float MaximalDistanceTo(Rectangle rectangle)
         {
             Debug.Assert(rectangle.Dimension == Dimension);
@@ -190,9 +134,6 @@ namespace SpatialIndex.RTree
             return (float) Math.Sqrt(distanceSquared);
         }
 
-        /// <summary>
-        ///     计算矩形体积
-        /// </summary>
         public float GetArea()
         {
             var area = 1.0f;
@@ -201,9 +142,6 @@ namespace SpatialIndex.RTree
             return area;
         }
 
-        /// <summary>
-        ///     计算与这个矩形合并后面积的增量（矩形不作变化）
-        /// </summary>
         public float GetEnlargement(Rectangle rectangle)
         {
             Debug.Assert(rectangle.Dimension == Dimension);
@@ -211,9 +149,6 @@ namespace SpatialIndex.RTree
             return Union(rectangle).GetArea() - GetArea();
         }
 
-        /// <summary>
-        ///     将当前矩形与给定矩形合并
-        /// </summary>
         public void AddRectangle(Rectangle rectangle)
         {
             Debug.Assert(rectangle.Dimension == Dimension);
@@ -225,9 +160,6 @@ namespace SpatialIndex.RTree
             }
         }
 
-        /// <summary>
-        ///     获得当前矩形与给定矩形合并后的矩形（矩形不作变化）
-        /// </summary>
         public Rectangle Union(Rectangle rectangle)
         {
             Debug.Assert(rectangle.Dimension == Dimension);
@@ -237,9 +169,6 @@ namespace SpatialIndex.RTree
             return ret;
         }
 
-        /// <summary>
-        ///     复制当前矩形
-        /// </summary>
         public Rectangle Copy()
         {
             var point1 = new Point(Dimension, MaxBoundries);
@@ -247,9 +176,6 @@ namespace SpatialIndex.RTree
             return new Rectangle(Dimension, point1, point2);
         }
 
-        /// <summary>
-        ///     判断两个矩形是否在几何上相等
-        /// </summary>
         public bool ContentEquals(Rectangle rectangle)
         {
             Debug.Assert(rectangle.Dimension == Dimension);
@@ -260,20 +186,9 @@ namespace SpatialIndex.RTree
             return true;
         }
 
-        /// <summary>
-        ///     判断两个矩形是否指向同一个对象
-        /// </summary>
         public bool ReferenceEquals(Rectangle rectangle)
         {
             return Equals(rectangle);
-        }
-
-        internal bool edgeOverlaps(Rectangle r)
-        {
-            for (int i = 0; i < Dimension; i++)
-                if (MinBoundries[i] == r.MinBoundries[i] || MaxBoundries[i] == r.MaxBoundries[i])
-                    return true;
-            return false;
         }
     }
 }
