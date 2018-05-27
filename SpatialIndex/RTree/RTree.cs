@@ -27,6 +27,8 @@ namespace SpatialIndex.RTree
 
         public int Count;
 
+        private int _countSum;
+
         public RTree(int maxEntries, int minEntries)
         {
             Debug.Assert(maxEntries >= 2 && minEntries <= maxEntries / 2 && minEntries >= 1);
@@ -250,12 +252,6 @@ namespace SpatialIndex.RTree
             return ret;
         }
 
-        public List<TItem> GetItemInRectangle(Rectangle rectangle)
-        {
-            //todo
-            return null;
-        }
-
         private float NearestK(Point p, Node n, float nearestDistance, float lowerBound)
         {
             for (var i = 0; i < n.EntryCount; i++)
@@ -306,10 +302,12 @@ namespace SpatialIndex.RTree
                 }
         }
 
-        public List<TItem> GetContainedItems(Rectangle rectangle)
+        public List<TItem> GetContainedItems(Rectangle rectangle, out int countSum)
         {
+            _countSum = 0;
             var retval = new List<TItem>();
-            Contains(rectangle, delegate(int id) { retval.Add(_idsToItems[id]); });
+            Contains(rectangle, delegate(int id) { retval.Add(_idsToItems[id]); });\
+            countSum = _countSum;
             return retval;
         }
 
@@ -317,6 +315,7 @@ namespace SpatialIndex.RTree
         {
             _parents.Clear();
             _parents.Push(_rootNodeId);
+            _countSum++;
 
             _parentsEntry.Clear();
             _parentsEntry.Push(-1);
@@ -325,7 +324,7 @@ namespace SpatialIndex.RTree
             {
                 var n = GetNode(_parents.Peek());
                 var startIndex = _parentsEntry.Peek() + 1;
-
+                _countSum++;
                 if (!n.IsLeaf())
                 {
                     var intersects = false;
@@ -333,6 +332,7 @@ namespace SpatialIndex.RTree
                         if (r.IntersectsWith(n.Entries[i]))
                         {
                             _parents.Push(n.Ids[i]);
+                            _countSum++;
                             _parentsEntry.Pop();
                             _parentsEntry.Push(i);
                             _parentsEntry.Push(-1);
