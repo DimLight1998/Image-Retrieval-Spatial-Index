@@ -306,7 +306,7 @@ namespace SpatialIndex.RTree
         {
             _countSum = 0;
             var retval = new List<TItem>();
-            Contains(rectangle, delegate(int id) { retval.Add(_idsToItems[id]); });\
+            Contains(rectangle, delegate(int id) { retval.Add(_idsToItems[id]); });
             countSum = _countSum;
             return retval;
         }
@@ -538,6 +538,10 @@ namespace SpatialIndex.RTree
             }
         }
 
+        public Rectangle getRootMbr()
+        {
+            return GetNode(_rootNodeId).Mbr;
+        }
 
         private Node AdjustTree(Node n, Node nn)
         {
