@@ -6,7 +6,7 @@ namespace SpatialIndex.RTree
 {
     public class Point
     {
-        public Point(int dimension, IReadOnlyCollection<float> coordinate)
+        public Point(int dimension, ICollection<float> coordinate)
         {
             Debug.Assert(dimension == coordinate.Count);
 

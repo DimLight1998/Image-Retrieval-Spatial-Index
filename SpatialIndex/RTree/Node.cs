@@ -9,6 +9,7 @@ namespace SpatialIndex.RTree
 
         internal Node(int id, int level, int maxEntries)
         {
+            Debug.Assert(id >= 0);
             Id = id;
             Level = level;
 
@@ -24,7 +25,7 @@ namespace SpatialIndex.RTree
 
         internal void AddEntry(Rectangle rectangle, int id)
         {
-            Debug.Assert(EntryCount < Entries.Length - 1);
+            Debug.Assert(EntryCount < Entries.Length);
 
             Entries[EntryCount] = rectangle.Copy();
             Ids[EntryCount] = id;
@@ -74,7 +75,7 @@ namespace SpatialIndex.RTree
             for (var i = 0; i < EntryCount; i++)
             {
                 if (Entries[i] != null) continue;
-                while (Entries[lastNotEmpty] == null) lastNotEmpty--;
+                while (Entries[lastNotEmpty] == null && lastNotEmpty > i) lastNotEmpty--;
                 Entries[i] = Entries[lastNotEmpty];
                 Ids[i] = Ids[lastNotEmpty];
                 Entries[lastNotEmpty] = null;
@@ -83,7 +84,7 @@ namespace SpatialIndex.RTree
 
         internal bool IsLeaf()
         {
-            return Level == 0;
+            return Level == 1;
         }
 
         internal void MbrRemovalUpdate(Rectangle removed)

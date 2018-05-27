@@ -46,6 +46,10 @@
       <Project>{1d587728-ec88-47bb-a440-869841af8452}</Project>
       <Name>FeatureExtraction</Name>
     </ProjectReference>
+      <ProjectReference Include="..\SpatialIndex\SpatialIndex.csproj">
+          <Project>{e0dcdfcf-87c5-4437-82b0-509017e198ad}</Project>
+          <Name>SpatialIndex</Name>
+      </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

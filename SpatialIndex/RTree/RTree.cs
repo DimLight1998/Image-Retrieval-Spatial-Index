@@ -20,16 +20,16 @@ namespace SpatialIndex.RTree
         private readonly Dictionary<int, Node> _nodeMap = new Dictionary<int, Node>();
         private readonly Stack<int> _parents = new Stack<int>();
         private readonly Stack<int> _parentsEntry = new Stack<int>();
-        private int _highestUsedNodeId = int.MinValue;
+        private int _highestUsedNodeId;
         private volatile int _idCounter = int.MinValue;
-        private int _rootNodeId = int.MinValue;
+        private int _rootNodeId;
         private int _treeHeight = 1;
 
         public int Count;
 
         public RTree(int maxEntries, int minEntries)
         {
-            Debug.Assert(_maxNodeEntries >= 2 && _minNodeEntries <= _maxNodeEntries / 2 && _minNodeEntries >= 1);
+            Debug.Assert(maxEntries >= 2 && minEntries <= maxEntries / 2 && minEntries >= 1);
 
             _maxNodeEntries = maxEntries;
             _minNodeEntries = minEntries;
@@ -268,7 +268,7 @@ namespace SpatialIndex.RTree
                 }
                 else if (tempDistance <= nearestDistance)
                 {
-                    nearestDistance = Nearest(p, GetNode(n.Ids[i]), nearestDistance);
+                    nearestDistance = NearestK(p, GetNode(n.Ids[i]), nearestDistance, lowerBound);
                 }
             }
 
@@ -480,7 +480,7 @@ namespace SpatialIndex.RTree
             if (lowestHighIndex == -1)
                 lowestHighIndex = highestLowIndex;
 
-            _isEntryAssigned[lowestHighIndex] = false;
+            _isEntryAssigned[lowestHighIndex] = true;
             n.EntryCount = 1;
 
             n.Mbr.MinBoundries = n.Entries[lowestHighIndex].MinBoundries.ToList();
