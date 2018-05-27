@@ -57,15 +57,39 @@ namespace Experiments
                 var slices = s.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
                 return new Point(featureDim, slices.Select(float.Parse).ToList());
             }).ToList();
+           
             var imageNames = File.ReadAllLines(ImageFilePath);
 
             for (var i = 0; i < rtreeSize; i++)
                 tree.AddRecord(new Rectangle(featureDim, points[nums[i]], points[nums[i]]), imageNames[nums[i]]);
+
+            var mbr = tree.GetRootMbr();
+            
+
+            var negInftyPoint = new Point(featureDim, Enumerable.Repeat(float.NegativeInfinity, featureDim).ToList());
+            var posInftyPoint = new Point(featureDim, Enumerable.Repeat(float.PositiveInfinity, featureDim).ToList());
+            var queryRect = new Rectangle(featureDim, negInftyPoint, posInftyPoint);
+            tree.GetContainedItems(queryRect, out var countSum);
+            return countSum;
         }
 
 
         public static void Main(string[] args)
         {
+            var type = args[0];
+            switch (type)
+            {
+                case "gnda":
+                    var size = int.Parse(args[1]);
+                    var strategy = int.Parse(args[2]);
+                    var minEntry = int.Parse(args[3]);
+                    var maxEntry = int.Parse(args[4]);
+                    Console.WriteLine(GetNumDiskAccess(size, strategy, minEntry, maxEntry));
+                    break;
+                default:
+                    Console.WriteLine("Error!\n");
+                    break;
+            }
         }
     }
 }
