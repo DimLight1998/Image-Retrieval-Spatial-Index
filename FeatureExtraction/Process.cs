@@ -3,16 +3,8 @@ using System.Drawing;
 
 namespace FeatureExtraction
 {
-    /// <summary>
-    ///     图像预处理相关的函数
-    /// </summary>
     public static class Process
     {
-        /// <summary>
-        ///     得到一个图像灰度化后的图像
-        /// </summary>
-        /// <param name="bitmap">需要灰度化的图像</param>
-        /// <returns>灰度化后的图像</returns>
         public static Bitmap GetGreyBitmap(Bitmap bitmap)
         {
             var processing = new Bitmap(bitmap.Width, bitmap.Height);
@@ -22,12 +14,6 @@ namespace FeatureExtraction
             return processing;
         }
 
-        /// <summary>
-        ///     得到一个图像二值化后的图像
-        /// </summary>
-        /// <param name="bitmap">需要二值化的图像</param>
-        /// <returns>二值化后的图像</returns>
-        /// <see cref="http://www.ruanyifeng.com/blog/2013/03/similar_image_search_part_ii.html" />
         public static Bitmap GetBinaryBitmap(Bitmap bitmap)
         {
             var greyBitmap = GetGreyBitmap(bitmap);

@@ -3,18 +3,8 @@ using System.Drawing;
 
 namespace FeatureExtraction
 {
-    /// <summary>
-    ///     颜色直方图有关的函数
-    /// </summary>
     public static class Histogram
     {
-        /// <summary>
-        ///     得到给定图像的 RGB 颜色直方图
-        /// </summary>
-        /// <param name="bitmap">需要直方图的图像</param>
-        /// <param name="numBins">每个通道中直方图的桶数</param>
-        /// <returns>一个具有三个元素的列表，每个元素都是一个数组（代表直方图），三个元素分别代表 R，G，B 通道的直方图</returns>
-        /// <remarks>每个通道产生的直方图都有 <c>numBins</c> 个桶，每个数的值为这个桶中的元素占所有元素的比</remarks>
         public static IList<double[]> GetRgbHistogram(Bitmap bitmap, int numBins)
         {
             var rHist = new double[numBins];
@@ -44,13 +34,6 @@ namespace FeatureExtraction
             return new List<double[]> {rHist, gHist, bHist};
         }
 
-        /// <summary>
-        ///     得到给定图像的 HSL 颜色直方图
-        /// </summary>
-        /// <param name="bitmap">需要直方图的图像</param>
-        /// <param name="numBins">每个通道中直方图的桶数</param>
-        /// <returns>一个具有三个元素的列表，每个元素都是一个数组（代表直方图），三个元素分别代表 H，S，L 通道的直方图</returns>
-        /// <remarks>每个通道产生的直方图都有 <c>numBins</c> 个桶，每个数的值为这个桶中的元素占所有元素的比</remarks>
         public static IList<double[]> GetHslHistogram(Bitmap bitmap, int numBins)
         {
             var hHist = new double[numBins];
