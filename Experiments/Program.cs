@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using SpatialIndex.RTree;
 
 namespace Experiments
@@ -39,7 +41,95 @@ namespace Experiments
                 list[k] = list[n];
                 list[n] = value;
             }
-        } 
+        }
+
+        private static double GetAccuracy(int strategy, int numTopK)
+        {
+            const int minEntry = 12;
+            const int maxEntry = 30;
+
+            var featurePath = StrategyMap[strategy].Item1;
+            var featureDim = StrategyMap[strategy].Item2;
+
+            var tree = new RTree<string>(maxEntry, minEntry);
+
+            var featureLines = File.ReadAllLines(featurePath);
+            var points = featureLines.Select(s =>
+            {
+                var slices = s.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+                return new Point(featureDim, slices.Select(float.Parse).ToList());
+            }).ToList();
+
+            var imageNames = File.ReadAllLines(ImageFilePath);
+
+            for (var i = 0; i < NumImages; i++)
+                tree.AddRecord(new Rectangle(featureDim, points[i], points[i]), imageNames[i]);
+
+            var totalAccuracy = 0d;
+            for (var i = 0; i < NumImages; i++)
+            {
+                var results = tree.GetKNearestItems(points[i], numTopK);
+                results.Remove(imageNames[i]);
+                var total = results.Count;
+                var count = 0;
+                foreach (var result in results)
+                {
+                    if (result.Split('_')[0] == imageNames[i].Split('_')[0])
+                        count++;
+                }
+
+                var accuracy = (double) count / total;
+                totalAccuracy += accuracy;
+            }
+
+            return totalAccuracy / NumImages;
+        }
+
+        private static double GetRecall(int strategy)
+        {
+            const int minEntry = 12;
+            const int maxEntry = 30;
+            var tree = new RTree<string>(maxEntry, minEntry);
+
+            var featurePath = StrategyMap[strategy].Item1;
+            var featureDim = StrategyMap[strategy].Item2;
+
+            var featureLines = File.ReadAllLines(featurePath);
+            var points = featureLines.Select(s =>
+            {
+                var slices = s.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+                return new Point(featureDim, slices.Select(float.Parse).ToList());
+            }).ToList();
+
+            var imageNames = File.ReadAllLines(ImageFilePath);
+
+            for (var i = 0; i < NumImages; i++)
+                tree.AddRecord(new Rectangle(featureDim, points[i], points[i]), imageNames[i]);
+
+            var dict = new Dictionary<string, int>();
+            for (var i = 0; i < NumImages; i++)
+            {
+                var category = imageNames[i].Split('_')[0];
+                if (dict.Keys.Contains(category)) dict[category]++;
+                else dict[category] = 1;
+            }
+
+            var totalRecall = 0d;
+            for (var i = 0; i < NumImages; i++)
+            {
+                var category = imageNames[i].Split('_')[0];
+                var results = tree.GetKNearestItems(points[i], dict[category]);
+                var count = 0;
+                foreach (var result in results)
+                    if (result.Split('_')[0] == category)
+                        count++;
+
+                var recall = (double) count / dict[category];
+                totalRecall += recall;
+            }
+
+            return totalRecall / NumImages;
+        }
 
         private static int GetNumDiskAccess(int rtreeSize, int strategy, int minEntry, int maxEntry)
         {
@@ -95,6 +185,9 @@ namespace Experiments
 
         public static void Main(string[] args)
         {
+            Console.WriteLine(GetNumDiskAccess(4000, 10, 12, 30));
+            return;
+
             var type = args[0];
             switch (type)
             {
