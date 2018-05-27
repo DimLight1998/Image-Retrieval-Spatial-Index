@@ -250,6 +250,12 @@ namespace SpatialIndex.RTree
             return ret;
         }
 
+        public List<TItem> GetItemInRectangle(Rectangle rectangle)
+        {
+            //todo
+            return null;
+        }
+
         private float NearestK(Point p, Node n, float nearestDistance, float lowerBound)
         {
             for (var i = 0; i < n.EntryCount; i++)
