@@ -538,7 +538,7 @@ namespace SpatialIndex.RTree
             }
         }
 
-        public Rectangle getRootMbr()
+        public Rectangle GetRootMbr()
         {
             return GetNode(_rootNodeId).Mbr;
         }

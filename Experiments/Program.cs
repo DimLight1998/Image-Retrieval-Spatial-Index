@@ -39,7 +39,7 @@ namespace Experiments
                 list[k] = list[n];
                 list[n] = value;
             }
-        }
+        } 
 
         private static int GetNumDiskAccess(int rtreeSize, int strategy, int minEntry, int maxEntry)
         {
@@ -57,22 +57,41 @@ namespace Experiments
                 var slices = s.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
                 return new Point(featureDim, slices.Select(float.Parse).ToList());
             }).ToList();
-           
+
             var imageNames = File.ReadAllLines(ImageFilePath);
 
             for (var i = 0; i < rtreeSize; i++)
                 tree.AddRecord(new Rectangle(featureDim, points[nums[i]], points[nums[i]]), imageNames[nums[i]]);
 
             var mbr = tree.GetRootMbr();
-            
+            var ratio = Math.Pow(1f / 2, 1f / featureDim);
 
-            var negInftyPoint = new Point(featureDim, Enumerable.Repeat(float.NegativeInfinity, featureDim).ToList());
-            var posInftyPoint = new Point(featureDim, Enumerable.Repeat(float.PositiveInfinity, featureDim).ToList());
-            var queryRect = new Rectangle(featureDim, negInftyPoint, posInftyPoint);
-            tree.GetContainedItems(queryRect, out var countSum);
-            return countSum;
+            const int queryTimes = 512;
+            var countSum = 0;
+
+            for (var i = 0; i < queryTimes; i++)
+            {
+                var queryMinBound = Enumerable.Repeat(0f, featureDim).ToList();
+                var queryMaxBound = Enumerable.Repeat(0f, featureDim).ToList();
+
+                for (var dim = 0; dim < featureDim; dim++)
+                {
+                    var length = mbr.MaxBoundries[dim] - mbr.MinBoundries[dim];
+                    var sideLength = length * ratio;
+                    var start = mbr.MinBoundries[dim] + new Random(DateTime.Now.Millisecond).NextDouble() *
+                                (mbr.MaxBoundries[dim] - sideLength - mbr.MinBoundries[dim]);
+                    var end = start + sideLength;
+                    queryMinBound[dim] = (float) start;
+                    queryMaxBound[dim] = (float) end;
+                }
+
+                var queryRect = new Rectangle(featureDim, queryMinBound, queryMaxBound);
+                tree.GetContainedItems(queryRect, out var count);
+                countSum += count;
+            }
+
+            return countSum / queryTimes;
         }
-
 
         public static void Main(string[] args)
         {
