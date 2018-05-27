@@ -9,11 +9,11 @@ namespace Experiments
 {
     internal class Program
     {
-        private const int TopK = 100;
-        private const int FeatureDimension = 9;
+        private const int TopK = 8;
+        private const int FeatureDimension = 12;
         private const string DataPath = @"G:\Workspace\DS&Alg-Project1-Release\data";
         private const string ImageFileName = "imagelist.txt";
-        private const string FeatureFileName = "color_moment.txt";
+        private const string FeatureFileName = "rgbhist4.txt";
         private const int RTreeMaxEntry = 30;
         private const int RTreeMinEntry = 12;
 
@@ -31,11 +31,10 @@ namespace Experiments
                 var name = imageList[i];
                 var slices = feature.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
                 var featureArr = (from slice in slices select float.Parse(slice)).ToList();
-                var point = new Point(9, featureArr);
+                var point = new Point(FeatureDimension, featureArr);
                 rTree.AddRecord(new Rectangle(FeatureDimension, point, point), name);
             }
 
-            //todo Change length / 100
             for (var i = 0; i < imageList.Length / 100; i++)
             {
                 var name = imageList[i];
@@ -45,7 +44,8 @@ namespace Experiments
                 var featureArr = (from slice in slices select float.Parse(slice)).ToList();
                 var point = new Point(FeatureDimension, featureArr);
 
-                var topResults = rTree.GetKNearestItems(point, TopK);
+                var topResults = rTree.GetKNearestItems(point, TopK).ToList();
+                topResults.Remove(name);
                 var correctCount = 0;
                 topResults.ForEach(s =>
                 {
@@ -53,7 +53,7 @@ namespace Experiments
                     if (resultCategory == category)
                         correctCount++;
                 });
-                Console.WriteLine(name + ' ' + (double) correctCount / TopK);
+                Console.WriteLine(name + ' ' + (double) correctCount / (TopK - 1));
             }
         }
     }
