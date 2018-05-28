@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -29,7 +30,7 @@ namespace Experiments
 
         private static void Shuffle<T>(this IList<T> list)
         {
-            var rng = new Random( /*DateTime.Now.Millisecond*/0);
+            var rng = new Random(DateTime.Now.Millisecond);
             var n = list.Count;
             while (n > 1)
             {
@@ -122,6 +123,9 @@ namespace Experiments
 
                 var recall = (double) count / dict[category];
                 totalRecall += recall;
+
+                if (i % 100 == 0)
+                    Console.Error.WriteLine(i);
             }
 
             return totalRecall / NumImages;
@@ -152,7 +156,7 @@ namespace Experiments
             var mbr = tree.GetRootMbr();
             var ratio = Math.Pow(1d / 2, 1d / featureDim);
 
-            const int queryTimes = 512;
+            const int queryTimes = 1024;
             var countSum = 0;
 
             for (var i = 0; i < queryTimes; i++)
@@ -164,7 +168,7 @@ namespace Experiments
                 {
                     var length = mbr.MaxBoundries[dim] - mbr.MinBoundries[dim];
                     var sideLength = length * ratio;
-                    var start = mbr.MinBoundries[dim] + new Random( /*DateTime.Now.Millisecond*/0).NextDouble() *
+                    var start = mbr.MinBoundries[dim] + new Random(DateTime.Now.Millisecond).NextDouble() *
                                 (mbr.MaxBoundries[dim] - sideLength - mbr.MinBoundries[dim]);
                     var end = start + sideLength;
                     queryMinBound[dim] = start;
@@ -181,22 +185,36 @@ namespace Experiments
 
         public static void Main(string[] args)
         {
-            Console.WriteLine(GetNumDiskAccess(4000, 10, 12, 30));
-            return;
-
             var type = args[0];
             switch (type)
             {
                 case "gnda":
+                {
                     var size = int.Parse(args[1]);
                     var strategy = int.Parse(args[2]);
                     var minEntry = int.Parse(args[3]);
                     var maxEntry = int.Parse(args[4]);
                     Console.WriteLine(GetNumDiskAccess(size, strategy, minEntry, maxEntry));
                     break;
+                }
+                case "accu":
+                {
+                    var strategy = int.Parse(args[1]);
+                    var numTopK = int.Parse(args[2]);
+                    Console.WriteLine(GetAccuracy(strategy, numTopK));
+                    break;
+                }
+                case "recl":
+                {
+                    var strategy = int.Parse(args[1]);
+                    Console.WriteLine(GetRecall(strategy));
+                    break;
+                }
                 default:
+                {
                     Console.WriteLine("Error!\n");
                     break;
+                }
             }
         }
     }

@@ -223,33 +223,68 @@ namespace SpatialIndex.RTree
             return nearestDistance;
         }
 
-        public List<TItem> GetKNearestItems(Point point, int k)
+
+        private List<Tuple<Rectangle, TItem>> _all = null;
+
+        private List<Tuple<Rectangle, TItem>> GetAllItems()
         {
-            var ret = new List<TItem>();
-            var retnum = 0;
-            var lowerBound = -1d;
-            while (retnum < k)
+            if (_all != null) return _all;
+            var ret = new List<Tuple<Rectangle, TItem>>();
+            foreach (var node in _nodeMap.Values)
             {
-                var rootNode = GetNode(_rootNodeId);
-
-                lowerBound = NearestK(point, rootNode, double.MaxValue, lowerBound);
-
-                foreach (var id in _nearestIds)
-                    if (retnum < k)
-                    {
-                        retnum++;
-                        ret.Add(_idsToItems[id]);
-                    }
-                    else
-                    {
-                        break;
-                    }
-
-
-                _nearestIds.Clear();
+                if (!node.IsLeaf()) continue;
+                for (var i = 0; i < _maxNodeEntries; i++)
+                {
+                    if (node.Entries[i] == null) continue;
+                    var id = node.Ids[i];
+                    var item = _idsToItems[id];
+                    ret.Add(new Tuple<Rectangle, TItem>(node.Entries[i], item));
+                }
             }
 
+            _all = ret.ToList();
             return ret;
+        }
+
+        public List<TItem> GetKNearestItems(Point point, int k)
+        {
+            var items = GetAllItems().ToList();
+            items.Sort((lhs, rhs) =>
+            {
+                var dis1 = lhs.Item1.MinimalDistanceTo(point);
+                var dis2 = rhs.Item1.MinimalDistanceTo(point);
+                return dis1.CompareTo(dis2);
+            });
+
+            items = items.Take(k).ToList();
+            return (from item in items select item.Item2).ToList();
+
+            return null;
+//            var ret = new List<TItem>();
+//            var retnum = 0;
+//            var lowerBound = -1d;
+//            while (retnum < k)
+//            {
+//                var rootNode = GetNode(_rootNodeId);
+//
+//                lowerBound = NearestK(point, rootNode, double.MaxValue, lowerBound);
+//
+//                foreach (var id in _nearestIds)
+//                    if (retnum < k)
+//                    {
+//                        retnum++;
+//                        ret.Add(_idsToItems[id]);
+//                    }
+//                    else
+//                    {
+//                        break;
+//                    }
+//
+//
+//                _nearestIds.Clear();
+//            }
+//
+//            return ret;
         }
 
         private double NearestK(Point p, Node n, double nearestDistance, double lowerBound)
