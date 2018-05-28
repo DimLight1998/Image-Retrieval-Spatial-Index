@@ -21,7 +21,7 @@ namespace SpatialIndex.RTree
             }
         }
 
-        public Rectangle(int dimension, List<float> minBoundries, List<float> maxBoundries)
+        public Rectangle(int dimension, List<double> minBoundries, List<double> maxBoundries)
         {
             Debug.Assert(dimension == minBoundries.Count && dimension == maxBoundries.Count);
 
@@ -31,8 +31,8 @@ namespace SpatialIndex.RTree
         }
 
         public int Dimension { get; }
-        public List<float> MaxBoundries { get; set; } = new List<float>();
-        public List<float> MinBoundries { get; set; } = new List<float>();
+        public List<double> MaxBoundries { get; set; } = new List<double>();
+        public List<double> MinBoundries { get; set; } = new List<double>();
 
         public bool OverlapsWith(Rectangle rectangle)
         {
@@ -74,75 +74,75 @@ namespace SpatialIndex.RTree
             return true;
         }
 
-        public float MinimalDistanceTo(Point point)
+        public double MinimalDistanceTo(Point point)
         {
             Debug.Assert(point.Dimension == Dimension);
 
-            var distanceSquared = 0f;
+            var distanceSquared = 0d;
             for (var i = 0; i < Dimension; i++)
                 if (point.Coordinate[i] < MinBoundries[i])
-                    distanceSquared += (float) Math.Pow(MinBoundries[i] - point.Coordinate[i], 2);
+                    distanceSquared += Math.Pow(MinBoundries[i] - point.Coordinate[i], 2);
                 else if (point.Coordinate[i] > MaxBoundries[i])
-                    distanceSquared += (float) Math.Pow(point.Coordinate[i] - MaxBoundries[i], 2);
+                    distanceSquared += Math.Pow(point.Coordinate[i] - MaxBoundries[i], 2);
 
-            return (float) Math.Sqrt(distanceSquared);
+            return Math.Sqrt(distanceSquared);
         }
 
-        public float MinimalDistanceTo(Rectangle rectangle)
+        public double MinimalDistanceTo(Rectangle rectangle)
         {
             Debug.Assert(rectangle.Dimension == Dimension);
 
-            var distanceSquared = 0f;
+            var distanceSquared = 0d;
 
             for (var i = 0; i < Dimension; i++)
                 if (MinBoundries[i] > rectangle.MaxBoundries[i])
-                    distanceSquared += (float) Math.Pow(MinBoundries[i] - rectangle.MaxBoundries[i], 2);
+                    distanceSquared += Math.Pow(MinBoundries[i] - rectangle.MaxBoundries[i], 2);
                 else if (MaxBoundries[i] < rectangle.MinBoundries[i])
-                    distanceSquared += (float) Math.Pow(rectangle.MinBoundries[i] - MaxBoundries[i], 2);
+                    distanceSquared += Math.Pow(rectangle.MinBoundries[i] - MaxBoundries[i], 2);
 
-            return (float) Math.Sqrt(distanceSquared);
+            return Math.Sqrt(distanceSquared);
         }
 
-        public float MaximalDistanceTo(Point point)
+        public double MaximalDistanceTo(Point point)
         {
             Debug.Assert(point.Dimension == Dimension);
 
-            var distanceSquared = 0f;
+            var distanceSquared = 0d;
             for (var i = 0; i < Dimension; i++)
             {
                 var diff1 = Math.Abs(point.Coordinate[i] - MaxBoundries[i]);
                 var diff2 = Math.Abs(point.Coordinate[i] - MinBoundries[i]);
-                distanceSquared += (float) Math.Pow(Math.Max(diff1, diff2), 2);
+                distanceSquared += Math.Pow(Math.Max(diff1, diff2), 2);
             }
 
-            return (float) Math.Sqrt(distanceSquared);
+            return Math.Sqrt(distanceSquared);
         }
 
-        public float MaximalDistanceTo(Rectangle rectangle)
+        public double MaximalDistanceTo(Rectangle rectangle)
         {
             Debug.Assert(rectangle.Dimension == Dimension);
 
-            var distanceSquared = 0f;
+            var distanceSquared = 0d;
 
             for (var i = 0; i < Dimension; i++)
             {
                 var diff1 = Math.Abs(rectangle.MaxBoundries[i] - MinBoundries[i]);
                 var diff2 = Math.Abs(rectangle.MinBoundries[i] - MaxBoundries[i]);
-                distanceSquared += (float) Math.Pow(Math.Max(diff1, diff2), 2);
+                distanceSquared += Math.Pow(Math.Max(diff1, diff2), 2);
             }
 
-            return (float) Math.Sqrt(distanceSquared);
+            return Math.Sqrt(distanceSquared);
         }
 
-        public float GetArea()
+        public double GetArea()
         {
-            var area = 1.0f;
+            var area = 1d;
             for (var i = 0; i < Dimension; i++)
                 area *= MaxBoundries[i] - MinBoundries[i];
             return area;
         }
 
-        public float GetEnlargement(Rectangle rectangle)
+        public double GetEnlargement(Rectangle rectangle)
         {
             Debug.Assert(rectangle.Dimension == Dimension);
 

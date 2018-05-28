@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using SpatialIndex.RTree;
 
 namespace Experiments
@@ -31,7 +29,7 @@ namespace Experiments
 
         private static void Shuffle<T>(this IList<T> list)
         {
-            var rng = new Random(DateTime.Now.Millisecond);
+            var rng = new Random( /*DateTime.Now.Millisecond*/0);
             var n = list.Count;
             while (n > 1)
             {
@@ -57,7 +55,7 @@ namespace Experiments
             var points = featureLines.Select(s =>
             {
                 var slices = s.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
-                return new Point(featureDim, slices.Select(float.Parse).ToList());
+                return new Point(featureDim, slices.Select(double.Parse).ToList());
             }).ToList();
 
             var imageNames = File.ReadAllLines(ImageFilePath);
@@ -73,10 +71,8 @@ namespace Experiments
                 var total = results.Count;
                 var count = 0;
                 foreach (var result in results)
-                {
                     if (result.Split('_')[0] == imageNames[i].Split('_')[0])
                         count++;
-                }
 
                 var accuracy = (double) count / total;
                 totalAccuracy += accuracy;
@@ -98,7 +94,7 @@ namespace Experiments
             var points = featureLines.Select(s =>
             {
                 var slices = s.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
-                return new Point(featureDim, slices.Select(float.Parse).ToList());
+                return new Point(featureDim, slices.Select(double.Parse).ToList());
             }).ToList();
 
             var imageNames = File.ReadAllLines(ImageFilePath);
@@ -145,7 +141,7 @@ namespace Experiments
             var points = featureLines.Select(s =>
             {
                 var slices = s.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
-                return new Point(featureDim, slices.Select(float.Parse).ToList());
+                return new Point(featureDim, slices.Select(double.Parse).ToList());
             }).ToList();
 
             var imageNames = File.ReadAllLines(ImageFilePath);
@@ -154,25 +150,25 @@ namespace Experiments
                 tree.AddRecord(new Rectangle(featureDim, points[nums[i]], points[nums[i]]), imageNames[nums[i]]);
 
             var mbr = tree.GetRootMbr();
-            var ratio = Math.Pow(1f / 2, 1f / featureDim);
+            var ratio = Math.Pow(1d / 2, 1d / featureDim);
 
             const int queryTimes = 512;
             var countSum = 0;
 
             for (var i = 0; i < queryTimes; i++)
             {
-                var queryMinBound = Enumerable.Repeat(0f, featureDim).ToList();
-                var queryMaxBound = Enumerable.Repeat(0f, featureDim).ToList();
+                var queryMinBound = Enumerable.Repeat(0d, featureDim).ToList();
+                var queryMaxBound = Enumerable.Repeat(0d, featureDim).ToList();
 
                 for (var dim = 0; dim < featureDim; dim++)
                 {
                     var length = mbr.MaxBoundries[dim] - mbr.MinBoundries[dim];
                     var sideLength = length * ratio;
-                    var start = mbr.MinBoundries[dim] + new Random(DateTime.Now.Millisecond).NextDouble() *
+                    var start = mbr.MinBoundries[dim] + new Random( /*DateTime.Now.Millisecond*/0).NextDouble() *
                                 (mbr.MaxBoundries[dim] - sideLength - mbr.MinBoundries[dim]);
                     var end = start + sideLength;
-                    queryMinBound[dim] = (float) start;
-                    queryMaxBound[dim] = (float) end;
+                    queryMinBound[dim] = start;
+                    queryMaxBound[dim] = end;
                 }
 
                 var queryRect = new Rectangle(featureDim, queryMinBound, queryMaxBound);

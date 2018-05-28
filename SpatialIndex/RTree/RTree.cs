@@ -20,14 +20,14 @@ namespace SpatialIndex.RTree
         private readonly Dictionary<int, Node> _nodeMap = new Dictionary<int, Node>();
         private readonly Stack<int> _parents = new Stack<int>();
         private readonly Stack<int> _parentsEntry = new Stack<int>();
+
+        private int _countSum;
         private int _highestUsedNodeId;
         private volatile int _idCounter = int.MinValue;
         private int _rootNodeId;
         private int _treeHeight = 1;
 
         public int Count;
-
-        private int _countSum;
 
         public RTree(int maxEntries, int minEntries)
         {
@@ -186,7 +186,7 @@ namespace SpatialIndex.RTree
             }
         }
 
-        public List<TItem> GetNearestItems(Point point, float distanceLimit)
+        public List<TItem> GetNearestItems(Point point, double distanceLimit)
         {
             var retval = new List<TItem>();
             var rootNode = GetNode(_rootNodeId);
@@ -198,7 +198,7 @@ namespace SpatialIndex.RTree
             return retval;
         }
 
-        private float Nearest(Point p, Node n, float nearestDistance)
+        private double Nearest(Point p, Node n, double nearestDistance)
         {
             for (var i = 0; i < n.EntryCount; i++)
             {
@@ -227,12 +227,12 @@ namespace SpatialIndex.RTree
         {
             var ret = new List<TItem>();
             var retnum = 0;
-            var lowerBound = -1.0f;
+            var lowerBound = -1d;
             while (retnum < k)
             {
                 var rootNode = GetNode(_rootNodeId);
 
-                lowerBound = NearestK(point, rootNode, float.MaxValue, lowerBound);
+                lowerBound = NearestK(point, rootNode, double.MaxValue, lowerBound);
 
                 foreach (var id in _nearestIds)
                     if (retnum < k)
@@ -252,7 +252,7 @@ namespace SpatialIndex.RTree
             return ret;
         }
 
-        private float NearestK(Point p, Node n, float nearestDistance, float lowerBound)
+        private double NearestK(Point p, Node n, double nearestDistance, double lowerBound)
         {
             for (var i = 0; i < n.EntryCount; i++)
             {
@@ -430,7 +430,7 @@ namespace SpatialIndex.RTree
 
         private void PickSeeds(Node n, Rectangle newRect, int newId, Node newNode)
         {
-            var maxNormalizedSeparation = 0f;
+            var maxNormalizedSeparation = 0d;
             var highestLowIndex = 0;
             var lowestHighIndex = 0;
 
@@ -495,7 +495,7 @@ namespace SpatialIndex.RTree
 
         private void PickNext(Node n, Node newNode)
         {
-            var maxDifference = float.NegativeInfinity;
+            var maxDifference = double.NegativeInfinity;
             var next = 0;
             var nextGroup = 0;
 
