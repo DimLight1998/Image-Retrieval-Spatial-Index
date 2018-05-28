@@ -9,22 +9,22 @@ namespace Experiments
     internal static class Program
     {
         private const int NumImages = 5613;
-        private const string ImageFilePath = @"G:\Workspace\DS&Alg-Project1-Release\data\imagelist.txt";
+        private const string ImageFilePath = @"Extra\imagelist.txt";
 
         private static readonly Dictionary<int, Tuple<string, int>> StrategyMap =
             new Dictionary<int, Tuple<string, int>>
             {
-                {1, new Tuple<string, int>(@"G:\Workspace\DS&Alg-Project1-Release\data\color_moment.txt", 9)},
-                {2, new Tuple<string, int>(@"G:\Workspace\DS&Alg-Project1-Release\data\hslbin2.txt", 6)},
-                {3, new Tuple<string, int>(@"G:\Workspace\DS&Alg-Project1-Release\data\hslbin3.txt", 9)},
-                {4, new Tuple<string, int>(@"G:\Workspace\DS&Alg-Project1-Release\data\hslbin4.txt", 12)},
-                {5, new Tuple<string, int>(@"G:\Workspace\DS&Alg-Project1-Release\data\hslbin5.txt", 15)},
-                {6, new Tuple<string, int>(@"G:\Workspace\DS&Alg-Project1-Release\data\hslbin6.txt", 18)},
-                {7, new Tuple<string, int>(@"G:\Workspace\DS&Alg-Project1-Release\data\rgbbin2.txt", 6)},
-                {8, new Tuple<string, int>(@"G:\Workspace\DS&Alg-Project1-Release\data\rgbbin3.txt", 9)},
-                {9, new Tuple<string, int>(@"G:\Workspace\DS&Alg-Project1-Release\data\rgbbin4.txt", 12)},
-                {10, new Tuple<string, int>(@"G:\Workspace\DS&Alg-Project1-Release\data\rgbbin5.txt", 15)},
-                {11, new Tuple<string, int>(@"G:\Workspace\DS&Alg-Project1-Release\data\rgbbin6.txt", 18)}
+                {1, new Tuple<string, int>(@"Extra\color_moment.txt", 9)},
+                {2, new Tuple<string, int>(@"Extra\hslbin2.txt", 6)},
+                {3, new Tuple<string, int>(@"Extra\hslbin3.txt", 9)},
+                {4, new Tuple<string, int>(@"Extra\hslbin4.txt", 12)},
+                {5, new Tuple<string, int>(@"Extra\hslbin5.txt", 15)},
+                {6, new Tuple<string, int>(@"Extra\hslbin6.txt", 18)},
+                {7, new Tuple<string, int>(@"Extra\rgbbin2.txt", 6)},
+                {8, new Tuple<string, int>(@"Extra\rgbbin3.txt", 9)},
+                {9, new Tuple<string, int>(@"Extra\rgbbin4.txt", 12)},
+                {10, new Tuple<string, int>(@"Extra\rgbbin5.txt", 15)},
+                {11, new Tuple<string, int>(@"Extra\rgbbin6.txt", 18)}
             };
 
         private static void Shuffle<T>(this IList<T> list)
