@@ -19,7 +19,7 @@ namespace SpatialIndex.RTree
         }
 
         internal int Id { get; }
-        internal int Level { get; }
+        internal int Level { get; set; }
         internal Rectangle Mbr { get; private set; }
         internal int EntryCount { get; set; }
 

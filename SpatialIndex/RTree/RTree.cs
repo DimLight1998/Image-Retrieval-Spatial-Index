@@ -16,6 +16,7 @@ namespace SpatialIndex.RTree
         private readonly Dictionary<TItem, int> _itemsToIds = new Dictionary<TItem, int>();
         private readonly int _maxNodeEntries;
         private readonly int _minNodeEntries;
+        private readonly int _numNodeEntries;
         private readonly List<int> _nearestIds = new List<int>();
         private readonly Dictionary<int, Node> _nodeMap = new Dictionary<int, Node>();
         private readonly Stack<int> _parents = new Stack<int>();
@@ -44,6 +45,79 @@ namespace SpatialIndex.RTree
 
             var root = new Node(_rootNodeId, 1, _maxNodeEntries);
             _nodeMap.Add(_rootNodeId, root);
+        }
+
+        public RTree(int numEntries, List<Tuple<Point, TItem>> data)
+        {
+            _maxNodeEntries = numEntries * 2;
+            _minNodeEntries = numEntries * 2 / numEntries;
+            _numNodeEntries = numEntries;
+
+            _isEntryAssigned = new bool[_maxNodeEntries];
+            _isInitEntryAssigned = new bool[_maxNodeEntries];
+
+            for (var i = 0; i < _maxNodeEntries; i++)
+            {
+                _isInitEntryAssigned[i] = false;
+                _isEntryAssigned[i] = false;
+            }
+                
+            for (var i = _idCounter; i < _idCounter + data.Count; i++)
+            {
+                _idsToItems.Add(i, data[i - _idCounter].Item2);
+                _itemsToIds.Add(data[i - _idCounter].Item2, i);
+            }
+
+            Node root;
+
+            root = build(0, data);
+            _nodeMap.Add(_rootNodeId, root);
+
+        }
+
+        private Node build(int k, List<Tuple<Point, TItem>> data)
+        {
+            int dim = data[0].Item1.Dimension;
+            if (data.Count < _maxNodeEntries)
+            {
+                var newLeaf = new Node(_rootNodeId, 1, _maxNodeEntries);
+                _nodeMap.Add(_rootNodeId, newLeaf);
+                _rootNodeId++;
+                for (int i = 0; i < data.Count; i++)
+                {
+                    var Mbr = new Rectangle(dim, data[i].Item1, data[i].Item1);
+                    newLeaf.AddEntry(Mbr, _idCounter);
+                    _idCounter++;
+                }
+                return newLeaf;
+            }
+
+            
+            var newNode = new Node(_rootNodeId, 1, _maxNodeEntries);
+            _nodeMap.Add(_rootNodeId, newNode);
+            _rootNodeId++;
+            data.Sort((lhs, rhs) =>
+            {
+                return lhs.Item1.Coordinate[k % _numNodeEntries].CompareTo(rhs.Item1.Coordinate[k % _numNodeEntries]);
+            });
+
+            List<Tuple<Point, TItem>> newList = new List<Tuple<Point, TItem>>();
+            Node tempN;
+
+            for (var i = 0; i < _numNodeEntries; i++)
+            {
+                int left = data.Count * i / _numNodeEntries;
+                int right = data.Count * (i + 1) / _numNodeEntries;
+                for (var j = left; j < right; j++)
+                    newList.Add(data[j]);
+                tempN = build(k + 1, newList);
+                newNode.AddEntry(tempN.Mbr, tempN.Id);
+                newList.Clear();
+                newNode.Level = tempN.Level + 1;
+            }
+            
+
+            return newNode;
         }
 
         public void AddRecord(Rectangle rectangle, TItem item)
@@ -259,7 +333,7 @@ namespace SpatialIndex.RTree
             items = items.Take(k).ToList();
             return (from item in items select item.Item2).ToList();
 
-            return null;
+//            return null;
 //            var ret = new List<TItem>();
 //            var retnum = 0;
 //            var lowerBound = -1d;
