@@ -25,7 +25,8 @@ namespace Experiments
                 {8, new Tuple<string, int>(@"Extra\rgbbin3.txt", 9)},
                 {9, new Tuple<string, int>(@"Extra\rgbbin4.txt", 12)},
                 {10, new Tuple<string, int>(@"Extra\rgbbin5.txt", 15)},
-                {11, new Tuple<string, int>(@"Extra\rgbbin6.txt", 18)}
+                {11, new Tuple<string, int>(@"Extra\rgbbin6.txt", 18)},
+                {12, new Tuple<string, int>(@"Extra\bin4x4.txt", 16)}
             };
 
         private static void Shuffle<T>(this IList<T> list)

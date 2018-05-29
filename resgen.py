@@ -25,8 +25,8 @@ def generate_task_1_list() -> list:
 
 def generate_task_2_list() -> list:
     ret = []
-    for strategy in [1, 3, 8]:
-        for top_k in [2, 4, 6, 8, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120]:
+    for strategy in [1, 3, 8, 12]:
+        for top_k in [2, 4, 6, 8, 10]:
             ret.append(
                 (f'feature_accu_{top_k}_strategy{strategy}', f'accu {strategy} {top_k}'))
     return ret
@@ -68,8 +68,8 @@ if __name__ == '__main__':
     with open("results.txt") as f:
         lines = f.read().split()
         for line in lines:
-            if(line.endswith(':')):
-                finished_tasks.append(line[:-1])
+            if ':' in line:
+                finished_tasks.append(line.split(':')[0])
 
     proc_list = []
     for task in task_list:

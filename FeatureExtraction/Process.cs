@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace FeatureExtraction
 {
@@ -68,6 +70,34 @@ namespace FeatureExtraction
                 greyBitmap.SetPixel(i, j, greyBitmap.GetPixel(i, j).R < bestThreshold ? Color.Black : Color.White);
 
             return greyBitmap;
+        }
+
+        public static List<double> GetBinaryFeature(Bitmap bitmap, int numCols, int numRows)
+        {
+            var ret = new List<double>();
+            var binaryBitmap = GetBinaryBitmap(bitmap);
+            var horiLen = binaryBitmap.Width / numCols;
+            var vertLen = binaryBitmap.Height / numRows;
+            for (var i = 0; i < numCols; i++)
+            for (var j = 0; j < numRows; j++)
+            {
+                var colStart = i * horiLen;
+                var rowStart = j * vertLen;
+
+                var blackCount = 0;
+                var total = horiLen * vertLen;
+                for (var c = colStart; c < colStart + horiLen; c++)
+                for (var r = rowStart; r < rowStart + vertLen; r++)
+                {
+                    if (bitmap.GetPixel(c, r).R < 128)
+                        blackCount++;
+                }
+
+                var ratio = (double)blackCount / total;
+                ret.Add(ratio);
+            }
+
+            return ret;
         }
 
         private static Color GetGreyColor(Color color)

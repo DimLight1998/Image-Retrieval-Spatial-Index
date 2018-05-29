@@ -305,3 +305,8 @@ measure_recl_strategy9: 0.157879382970085
 measure_recl_strategy10: 0.157917553537258
 measure_recl_strategy11: 0.156821318845539
 
+feature_accu_6_strategy12: 0.132157491537503
+feature_accu_4_strategy12: 0.136350139556982
+feature_accu_2_strategy12: 0.147158382326741
+feature_accu_10_strategy12: 0.127323475265746
+feature_accu_8_strategy12: 0.128935379603474
