@@ -1,5 +1,4 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -205,6 +204,59 @@ namespace Experiments
             return tree.SplitCount;
         }
 
+        private static void InteractiveDemo()
+        {
+            Console.WriteLine("Entering interactive mode...");
+            Console.WriteLine("Which feature do you want to use? (Input an integer.)");
+            Console.WriteLine("[1]         Color moment");
+            Console.WriteLine("[2 - 6]     RGB Histgram, with dim 2,3,4,5,6 in each channel");
+            Console.WriteLine("[7 - 11]    HSL Histgram, with dim 2,3,4,5,6 in each channel");
+            Console.WriteLine("[12]        4x4 Binary density");
+            var strategy = int.Parse(Console.ReadLine() ?? throw new Exception());
+
+            Console.WriteLine("Building R Tree...");
+            const int minEntry = 12;
+            const int maxEntry = 30;
+
+            var featurePath = StrategyMap[strategy].Item1;
+            var featureDim = StrategyMap[strategy].Item2;
+
+            var tree = new RTree<string>(maxEntry, minEntry);
+
+            var featureLines = File.ReadAllLines(featurePath);
+            var points = featureLines.Select(s =>
+            {
+                var slices = s.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+                return new Point(featureDim, slices.Select(double.Parse).ToList());
+            }).ToList();
+
+            var imageNames = File.ReadAllLines(ImageFilePath);
+
+            for (var i = 0; i < NumImages; i++)
+                tree.AddRecord(new Rectangle(featureDim, points[i], points[i]), imageNames[i]);
+
+            var imagePointMap = new Dictionary<string, Point>();
+            for (var i = 0; i < NumImages; i++)
+                imagePointMap.Add(imageNames[i], points[i]);
+
+            while (true)
+            {
+                Console.WriteLine(
+                    "Please choose a image by file name (e.g. \"n01613177_3.JPEG\", quotation mark is not needed) :");
+                var imageName = Console.ReadLine();
+                if (imageName == null)
+                    throw new Exception();
+                Console.WriteLine("How many items do you want to retrievel?");
+                var topK = int.Parse(Console.ReadLine() ?? throw new Exception());
+
+                var results = tree.GetKNearestItems(imagePointMap[imageName], topK);
+                results.ForEach(res =>
+                {
+                    Console.WriteLine($"{res}     {string.Join(" ", imagePointMap[res].Coordinate)}");
+                });
+            }
+        }
+
         public static void Main(string[] args)
         {
             var type = args[0];
@@ -239,6 +291,11 @@ namespace Experiments
                     var minEntry = int.Parse(args[3]);
                     var maxEntry = int.Parse(args[4]);
                     Console.WriteLine(GetSplitCountOfBuilding(size, strategy, minEntry, maxEntry));
+                    break;
+                }
+                case "demo":
+                {
+                    InteractiveDemo();
                     break;
                 }
                 default:

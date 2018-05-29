@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace FeatureExtraction
 {
@@ -88,12 +87,10 @@ namespace FeatureExtraction
                 var total = horiLen * vertLen;
                 for (var c = colStart; c < colStart + horiLen; c++)
                 for (var r = rowStart; r < rowStart + vertLen; r++)
-                {
                     if (bitmap.GetPixel(c, r).R < 128)
                         blackCount++;
-                }
 
-                var ratio = (double)blackCount / total;
+                var ratio = (double) blackCount / total;
                 ret.Add(ratio);
             }
 
