@@ -27,6 +27,7 @@ namespace SpatialIndex.RTree
         private volatile int _idCounter = int.MinValue;
         private int _rootNodeId;
         private int _treeHeight = 1;
+        public int SplitCount { get; private set; }
 
         public int Count;
 
@@ -61,7 +62,7 @@ namespace SpatialIndex.RTree
                 _isInitEntryAssigned[i] = false;
                 _isEntryAssigned[i] = false;
             }
-                
+
             for (var i = _idCounter; i < _idCounter + data.Count; i++)
             {
                 _idsToItems.Add(i, data[i - _idCounter].Item2);
@@ -72,7 +73,6 @@ namespace SpatialIndex.RTree
 
             root = build(0, data);
             _nodeMap.Add(_rootNodeId, root);
-
         }
 
         private Node build(int k, List<Tuple<Point, TItem>> data)
@@ -89,16 +89,18 @@ namespace SpatialIndex.RTree
                     newLeaf.AddEntry(Mbr, _idCounter);
                     _idCounter++;
                 }
+
                 return newLeaf;
             }
 
-            
+
             var newNode = new Node(_rootNodeId, 1, _maxNodeEntries);
             _nodeMap.Add(_rootNodeId, newNode);
             _rootNodeId++;
             data.Sort((lhs, rhs) =>
             {
-                return lhs.Item1.Coordinate[k % _numNodeEntries].CompareTo(rhs.Item1.Coordinate[k % _numNodeEntries]);
+                return lhs.Item1.Coordinate[k % _numNodeEntries]
+                    .CompareTo(rhs.Item1.Coordinate[k % _numNodeEntries]);
             });
 
             List<Tuple<Point, TItem>> newList = new List<Tuple<Point, TItem>>();
@@ -115,7 +117,7 @@ namespace SpatialIndex.RTree
                 newList.Clear();
                 newNode.Level = tempN.Level + 1;
             }
-            
+
 
             return newNode;
         }
@@ -495,6 +497,7 @@ namespace SpatialIndex.RTree
 
         private Node SplitNode(Node n, Rectangle newRect, int newId)
         {
+            SplitCount++;
             Array.Copy(_isInitEntryAssigned, 0, _isEntryAssigned, 0, _maxNodeEntries);
             var newNode = new Node(GetNextNodeId(), n.Level, _maxNodeEntries);
             _nodeMap.Add(newNode.Id, newNode);

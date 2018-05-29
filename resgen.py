@@ -43,6 +43,17 @@ def generate_task_3_list() -> list:
     return ret
 
 
+def generate_task_4_list() -> list:
+    ret = []
+    size = 5613
+    strategy = 1
+    for max_entry in [4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48]:
+        for min_entry in range(int(max_entry / 3), int(max_entry / 2 + 1)):
+            ret.append((f'splitcount_{min_entry}_{max_entry}',
+                        f'gscb {size} {strategy} {min_entry} {max_entry}'))
+    return ret
+
+
 def run_task(task_name: str, file_path: str, file_lock: multiprocessing.Lock, command: str) -> None:
     print(f'now running: {task_name}')
     global executable_path
@@ -63,6 +74,7 @@ if __name__ == '__main__':
     task_list.extend(generate_task_1_list())
     task_list.extend(generate_task_2_list())
     task_list.extend(generate_task_3_list())
+    task_list.extend(generate_task_4_list())
 
     finished_tasks = []
     with open("results.txt") as f:

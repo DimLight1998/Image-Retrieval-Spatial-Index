@@ -184,6 +184,27 @@ namespace Experiments
             return countSum / queryTimes;
         }
 
+        private static int GetSplitCountOfBuilding(int rtreeSize, int strategy, int minEntry, int maxEntry)
+        {
+            var tree = new RTree<string>(maxEntry, minEntry);
+
+            var featurePath = StrategyMap[strategy].Item1;
+            var featureDim = StrategyMap[strategy].Item2;
+            var featureLines = File.ReadAllLines(featurePath);
+            var points = featureLines.Select(s =>
+            {
+                var slices = s.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+                return new Point(featureDim, slices.Select(double.Parse).ToList());
+            }).ToList();
+
+            var imageNames = File.ReadAllLines(ImageFilePath);
+
+            for (var i = 0; i < NumImages; i++)
+                tree.AddRecord(new Rectangle(featureDim, points[i], points[i]), imageNames[i]);
+
+            return tree.SplitCount;
+        }
+
         public static void Main(string[] args)
         {
             var type = args[0];
@@ -209,6 +230,15 @@ namespace Experiments
                 {
                     var strategy = int.Parse(args[1]);
                     Console.WriteLine(GetRecall(strategy));
+                    break;
+                }
+                case "gscb":
+                {
+                    var size = int.Parse(args[1]);
+                    var strategy = int.Parse(args[2]);
+                    var minEntry = int.Parse(args[3]);
+                    var maxEntry = int.Parse(args[4]);
+                    Console.WriteLine(GetSplitCountOfBuilding(size, strategy, minEntry, maxEntry));
                     break;
                 }
                 default:
