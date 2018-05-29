@@ -2,8 +2,8 @@ import subprocess
 import multiprocessing
 import os
 
-executable_path = '"./Experiments/bin/Release/Experiments.exe"'
-
+# executable_path = '"./Experiments/bin/Release/Experiments.exe"'
+executable_path = '"./Binary/Experiments.exe"'
 
 def generate_task_1_list() -> list:
     ret = []
